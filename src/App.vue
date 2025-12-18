@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { ConfigProvider } from 'ant-design-vue'
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <ConfigProvider
+      :theme="{
+        token: {
+            'colorPrimary': '#2196f3',
+        }
+      }"
+  >
+    <router-view v-slot="{ Component }" >
+      <transition>
+        <component :is="Component"></component>
+      </transition>
+    </router-view>
+  </ConfigProvider>
 </template>
 
 <style scoped>

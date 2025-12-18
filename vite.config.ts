@@ -1,11 +1,21 @@
 import { defineConfig, loadEnv, type ConfigEnv, type UserConfig  } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import UnoCSS from 'unocss/vite'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode } : ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd())
   return {
-    plugins: [vue()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      }
+    },
+    plugins: [
+      vue(),
+      UnoCSS()
+    ],
     server: {
       port: 5173,
       host: env.VITE_HOST || 'localhost',
