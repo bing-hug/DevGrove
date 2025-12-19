@@ -9,7 +9,7 @@ import Aside from '@/views/Layout/components/layout-aside.vue'
       class="pr-8 border-r-1 border-r-solid border-r-[#0505050f] bg-transparent">
       <Aside></Aside>
     </div>
-    <layout-content>
+    <layout-content class="p-20">
       <router-view v-slot="{ Component }">
         <transition>
           <component :is="Component"></component>
