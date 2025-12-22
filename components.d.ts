@@ -14,6 +14,7 @@ declare module 'vue' {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IMaterialSymbolsHomeRounded: typeof import('~icons/material-symbols/home-rounded')['default']
     IMdiAlarmArmHome: typeof import('~icons/mdi/alarm-arm-home')['default']
+    IMdiCalendarMonth: typeof import('~icons/mdi/calendar-month')['default']
     IMdiHome: typeof import('~icons/mdi/home')['default']
     IMdiHomeAlarmArmHome: typeof import('~icons/mdi/home-alarm-arm-home')['default']
     IMdiHomeOutline: typeof import('~icons/mdi/home-outline')['default']

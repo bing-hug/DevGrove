@@ -61,4 +61,8 @@ const handleClick: MenuProps['onClick'] = (e) => {
   line-height: 22px;
   vertical-align: middle;
 }
+
+:deep(.ant-menu-light) {
+  background: transparent;
+}
 </style>
