@@ -1,9 +1,10 @@
 export interface PlanItemInfo {
-  id: string
+  id: number
   title: string
   description: string
-  startDate: Date
+  start_date: Date
   priority: string
   remark: string
-  isCompleted: boolean
+  is_completed: boolean
+  created_at: Date
 }

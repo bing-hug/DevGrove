@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Button, Card, DatePicker } from 'ant-design-vue'
-import { getAllTasks } from '@/apis'
+import { Button, Card, DatePicker, Empty } from 'ant-design-vue'
+import { getAllPlansApi, queryPlansByDateApi } from '@/apis'
 import CreateTask from '@/views/Home/components/create-task.vue'
 import PlanItem from '@/views/Home/components/plan-item.vue'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import type { PlanItemInfo } from '@/views/Home/type'
 
 const nowDate = ref(dayjs())
@@ -14,12 +14,29 @@ function openCreateTaskModal() {
   createTaskRef.value?.openModal()
 }
 
-onMounted(async () => {
+async function handleDateChange(_: string | Dayjs, dateString: string) {
+  console.log(dateString)
   try {
-    planList.value = await getAllTasks()
+    const res = await queryPlansByDateApi(dateString)
+    planList.value = res.data
   } catch (error) {
     console.log(error)
   }
+}
+
+async function getAllPlans() {
+  try {
+    const res = await getAllPlansApi()
+    console.log(res)
+    planList.value = res.data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+onMounted(async () => {
+  const dateString = dayjs().format('YYYY-MM-DD')
+  await handleDateChange(dateString, dateString)
 })
 </script>
 
@@ -45,20 +62,36 @@ onMounted(async () => {
             <div class="flex items-center gap-10">
               <DatePicker
                 v-model:value="nowDate"
-                placeholder="请选择开始时间" />
+                placeholder="请选择开始时间"
+                @change="handleDateChange" />
             </div>
           </div>
         </template>
-        <div class="plan-list flex flex-col gap-10">
-          <plan-item
-            v-for="item in planList"
-            :key="item.id"
-            :plan-item="item" />
-        </div>
+
+        <template v-if="planList.length">
+          <div class="plan-list flex flex-col gap-10">
+            <plan-item
+              v-for="item in planList"
+              :key="item.id"
+              :plan-item="item"
+              @refresh="getAllPlans" />
+          </div>
+        </template>
+
+        <template v-else>
+          <Empty
+            :image="Empty.PRESENTED_IMAGE_SIMPLE"
+            description="今天都没有待办任务喔～"></Empty>
+          <div class="flex-center">
+            <Button type="primary" @click="openCreateTaskModal">
+              添加任务
+            </Button>
+          </div>
+        </template>
       </Card>
     </main>
 
-    <CreateTask ref="createTaskRef" />
+    <CreateTask ref="createTaskRef" @refresh="getAllPlans" />
   </div>
 </template>
 

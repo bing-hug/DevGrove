@@ -1,20 +1,74 @@
 <script setup lang="ts">
 import type { PlanItemInfo } from '@/views/Home/type'
 import { priorityEnum } from '@/enums'
-import { Tag, Button } from 'ant-design-vue'
+import { Tag, Button, Input, message } from 'ant-design-vue'
+import { setPlanStatusApi, deletePlanApi, updatePlanRemarkApi } from '@/apis'
+import { debounce } from 'lodash'
 
 const props = defineProps<{
   planItem: PlanItemInfo
 }>()
 
+const emits = defineEmits<{
+  (e: 'refresh'): void
+}>()
+
+const remark = ref(props.planItem.remark)
+
 const priorityInfo = computed(() => {
   return (
-    priorityEnum.find((item) => item.value === props.planItem.priority) || {}
+    priorityEnum.find((item) => item.value === props.planItem.priority) || {
+      label: '无',
+      color: 'default',
+      icon: ''
+    }
   )
 })
 
+/**
+ * 切换任务状态
+ */
+async function togglePlanStatus() {
+  const res = await setPlanStatusApi({
+    id: props.planItem.id,
+    is_completed: !props.planItem.is_completed
+  })
+  if (res.success) {
+    emits('refresh')
+  }
+}
+
+async function deletePlan() {
+  try {
+    const res = await deletePlanApi(props.planItem.id)
+    if (res.success) {
+      emits('refresh')
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const debounceUpdateRemark = debounce(async () => {
+  try {
+    const res = await updatePlanRemarkApi({
+      id: props.planItem.id,
+      remark: remark.value
+    })
+    if (res.success) {
+      message.success('更新备注成功')
+    }
+  } catch (error) {
+    console.log('更新备注失败', error)
+  }
+}, 1000)
+
+async function handleRemarkChange() {
+  debounceUpdateRemark()
+}
+
 const buttonStyle = computed(() => {
-  if (!props.planItem.isCompleted) {
+  if (!props.planItem.is_completed) {
     return {
       backgroundColor: 'rgb(82, 196, 26)',
       borderColor: 'rgb(82, 196, 26)',
@@ -42,9 +96,9 @@ const buttonStyle = computed(() => {
         </span>
       </Tag>
 
-      <Tag :color="planItem.isCompleted ? 'success' : 'processing'">
+      <Tag :color="planItem.is_completed ? 'success' : 'processing'">
         <span class="py-5">{{
-          planItem.isCompleted ? '已完成' : '未完成'
+          planItem.is_completed ? '已完成' : '未完成'
         }}</span>
       </Tag>
     </div>
@@ -53,22 +107,26 @@ const buttonStyle = computed(() => {
       <div class="info flex-1">
         <div
           class="description min-h-80 px-12 py-8 color-white"
-          :style="{ backgroundColor: priorityInfo.color }">
+          :style="{ backgroundColor: priorityInfo?.color }">
           {{ planItem.description || '无' }}
         </div>
-        <div class="remark">
-          {{ planItem.remark || '无' }}
+        <div class="remark mt-10">
+          <Input
+            v-model:value="remark"
+            placeholder="请输入备注（可选）"
+            @change="handleRemarkChange" />
         </div>
       </div>
       <div class="action flex gap-10">
         <Button
           type="primary"
           class="rounded-6 py-4 px-12 h-32"
-          :style="buttonStyle">
-          {{ planItem.isCompleted ? '回滚' : '完成' }}
+          :style="buttonStyle"
+          @click="togglePlanStatus">
+          {{ planItem.is_completed ? '回滚' : '完成' }}
         </Button>
 
-        <Button type="text"> 删除 </Button>
+        <Button type="text" @click="deletePlan"> 删除 </Button>
       </div>
     </div>
   </div>

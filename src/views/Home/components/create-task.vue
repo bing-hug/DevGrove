@@ -8,7 +8,8 @@ import {
   Textarea,
   DatePicker,
   Select,
-  SelectOption
+  SelectOption,
+  message
 } from 'ant-design-vue'
 import type { FormInstance } from 'ant-design-vue'
 import dayjs, { Dayjs } from 'dayjs'
@@ -22,6 +23,8 @@ interface FormState {
   startDate: Dayjs
   remark: string
 }
+
+const emits = defineEmits(['createTask'])
 
 const createTaskFormRef = useTemplateRef<FormInstance>('createTaskFormRef')
 const form = reactive<FormState>({
@@ -46,9 +49,15 @@ async function handleCreateTask() {
     submitLoading.value = true
     const params = {
       ...form,
-      startDate: dayjs(form.startDate).toDate()
+      start_date: dayjs(form.startDate).toDate(),
+      is_completed: false
     }
-    await createPlanApi(params)
+    const res = await createPlanApi(params)
+    if (res.success) {
+      message.success('添加任务成功')
+      emits('createTask', res.data)
+      visible.value = false
+    }
   } catch (error) {
     console.log(error)
   } finally {

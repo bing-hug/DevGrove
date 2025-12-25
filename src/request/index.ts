@@ -50,10 +50,10 @@ export class Request {
     this.instance.interceptors.response.use(
       (res: AxiosResponse) => {
         if (res.status === 200 && res.data.success) {
-          return res.data.data
+          return res.data
         }
         message.error(res.data.errorMsg)
-        return Promise.reject(err)
+        return Promise.reject(res.data.errorMsg)
       },
       (err: AxiosError) => {
         // 这里用来处理http常见错误，进行全局提示
@@ -115,18 +115,12 @@ export class Request {
     return this.instance.request(config)
   }
 
-  public get<T>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<AxiosResponse<Result<T>>> {
+  public get<T>(url: string, config?: AxiosRequestConfig): Promise<Result<T>> {
     return this.instance.get(url, config)
   }
 
-  public post<T>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<AxiosResponse<Result<T>>> {
-    const data = config.data || null
+  public post<T>(url: string, config?: AxiosRequestConfig): Promise<Result<T>> {
+    const data = config?.data || null
     return this.instance.post(url, data, config)
   }
 }
