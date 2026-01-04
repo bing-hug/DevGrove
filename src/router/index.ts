@@ -12,10 +12,28 @@ const router = createRouter({
           name: 'Home',
           component: () => import('@/views/Home/home-view.vue'),
           meta: {
-            title: '最新',
+            title: '每日计划',
             icon: 'mdi:hot-circle'
           }
         },
+        {
+          path: 'life-records',
+          name: 'Life',
+          component: () => import('@/views/LifeRecord/life-view.vue'),
+          meta: {
+            title: '生活点滴',
+            icon: 'mdi:journal-outline'
+          }
+        },
+        // {
+        //   path: 'plan',
+        //   name: 'Plan',
+        //   component: () => import('@/views/Plan/plan-view.vue'),
+        //   meta: {
+        //     title: '每日总结',
+        //     icon: 'mdi:planner-outline'
+        //   }
+        // },
         {
           path: 'knowledge-tree',
           name: 'KnowledgeTree',
@@ -24,15 +42,6 @@ const router = createRouter({
           meta: {
             title: '知识树',
             icon: 'mdi:palm-tree'
-          }
-        },
-        {
-          path: 'plan',
-          name: 'Plan',
-          component: () => import('@/views/Plan/plan-view.vue'),
-          meta: {
-            title: '每日计划',
-            icon: 'mdi:planner-outline'
           }
         },
         {

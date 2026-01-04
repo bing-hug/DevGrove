@@ -5,6 +5,9 @@ import CreateTask from '@/views/Home/components/create-task.vue'
 import PlanItem from '@/views/Home/components/plan-item.vue'
 import dayjs, { Dayjs } from 'dayjs'
 import type { PlanItemInfo } from '@/views/Home/type'
+import happyIcon from '@/assets/happy.svg'
+import MainHeader from '@/components/main-header.vue'
+import { defaultTaskList } from '@/views/Home/type'
 
 const nowDate = ref(dayjs())
 const planList = ref<PlanItemInfo[]>([])
@@ -37,19 +40,22 @@ async function getAllPlans() {
 onMounted(async () => {
   const dateString = dayjs().format('YYYY-MM-DD')
   await handleDateChange(dateString, dateString)
+  if (planList.value.length === 0 && createTaskRef.value) {
+    for (const params of defaultTaskList) {
+      await createTaskRef.value.onCreateTask(params)
+    }
+    await handleDateChange(dateString, dateString)
+  }
 })
 </script>
 
 <template>
   <div class="home">
-    <header
-      class="home-header flex justify-between items-center bg-white p-16 rounded-10">
-      <div class="home-header-title flex gap-20 items-center leading-48">
-        <img src="@/assets/happy.svg" alt="开心" class="h-48" />
-        <div class="font-24 font-bold theme-color">开心每一天</div>
-      </div>
-      <Button type="primary" @click="openCreateTaskModal">添加任务</Button>
-    </header>
+    <main-header
+      :icon="happyIcon"
+      title="开心每一天"
+      button-text="添加任务"
+      @button-click="openCreateTaskModal" />
 
     <main class="home-main p-24">
       <Card hoverable>
@@ -94,9 +100,3 @@ onMounted(async () => {
     <CreateTask ref="createTaskRef" @refresh="getAllPlans" />
   </div>
 </template>
-
-<style scoped lang="scss">
-.home-header {
-  box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 8px;
-}
-</style>

@@ -13,7 +13,7 @@ import {
 } from 'ant-design-vue'
 import type { FormInstance } from 'ant-design-vue'
 import dayjs, { Dayjs } from 'dayjs'
-import { createPlanApi } from '@/apis'
+import { createPlanApi, type Task } from '@/apis'
 import { priorityEnum } from '@/enums/index.ts'
 
 interface FormState {
@@ -24,7 +24,7 @@ interface FormState {
   remark: string
 }
 
-const emits = defineEmits(['createTask'])
+const emits = defineEmits(['refresh'])
 
 const createTaskFormRef = useTemplateRef<FormInstance>('createTaskFormRef')
 const form = reactive<FormState>({
@@ -45,18 +45,22 @@ const formRules = {
 const submitLoading = ref(false)
 async function handleCreateTask() {
   await createTaskFormRef.value?.validate()
+  const params = {
+    ...form,
+    start_date: dayjs(form.startDate).toDate(),
+    is_completed: false
+  }
+  await onCreateTask(params)
+}
+
+async function onCreateTask(params: Task) {
   try {
     submitLoading.value = true
-    const params = {
-      ...form,
-      start_date: dayjs(form.startDate).toDate(),
-      is_completed: false
-    }
     const res = await createPlanApi(params)
     if (res.success) {
       message.success('添加任务成功')
-      emits('createTask', res.data)
       visible.value = false
+      emits('refresh', res.data)
     }
   } catch (error) {
     console.log(error)
@@ -72,7 +76,8 @@ function openModal() {
 }
 
 defineExpose({
-  openModal
+  openModal,
+  onCreateTask
 })
 </script>
 

@@ -4,7 +4,7 @@ import type { PlanItemInfo } from '@/views/Home/type'
 /**
  * 获取所有任务
  */
-interface Task {
+export interface Task {
   id?: number
   title: string
   description: string
