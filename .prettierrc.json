@@ -5,8 +5,9 @@
   "tabWidth": 2,
   "bracketSpacing": true,
   "objectWrap": "preserve",
-  "bracketSameLine": true,
+  "bracketSameLine": false,
   "arrowParens": "always",
   "vueIndentScriptAndStyle": false,
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "vueHtmlMultilineAttributes": true
 }

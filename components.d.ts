@@ -12,8 +12,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     IMdiCalendarMonth: typeof import('~icons/mdi/calendar-month')['default']
+    IMdiImageAddOutline: typeof import('~icons/mdi/image-add-outline')['default']
     MainHeader: typeof import('./src/components/main-header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UdeitorPlus: typeof import('./src/components/udeitor-plus.vue')['default']
   }
 }

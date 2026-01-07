@@ -29,7 +29,8 @@ const handleClick: MenuProps['onClick'] = (e) => {
 <template>
   <div class="aside-container h-full">
     <div
-      class="logo px-16 py-12 leading-22 text-left border-b-solid border-b-[#0505050f] border-b-1">
+      class="logo px-16 py-12 leading-22 text-left border-b-solid border-b-[#0505050f] border-b-1"
+    >
       <img src="@/assets/logo.png" class="w-32 h-32" alt="logo" />
       <text class="logo-text">成长篇</text>
     </div>
@@ -40,7 +41,8 @@ const handleClick: MenuProps['onClick'] = (e) => {
         style="width: 256px; border: none"
         mode="inline"
         :items="asideMenu"
-        @click="handleClick"></Menu>
+        @click="handleClick"
+      ></Menu>
     </div>
   </div>
 </template>

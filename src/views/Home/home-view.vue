@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button, Card, DatePicker, Empty } from 'ant-design-vue'
-import { getAllPlansApi, queryPlansByDateApi } from '@/apis'
+import { queryPlansByDateApi } from '@/apis'
 import CreateTask from '@/views/Home/components/create-task.vue'
 import PlanItem from '@/views/Home/components/plan-item.vue'
 import dayjs, { Dayjs } from 'dayjs'
@@ -18,7 +18,6 @@ function openCreateTaskModal() {
 }
 
 async function handleDateChange(_: string | Dayjs, dateString: string) {
-  console.log(dateString)
   try {
     const res = await queryPlansByDateApi(dateString)
     planList.value = res.data
@@ -27,24 +26,22 @@ async function handleDateChange(_: string | Dayjs, dateString: string) {
   }
 }
 
-async function getAllPlans() {
+async function refreshPlans() {
   try {
-    const res = await getAllPlansApi()
-    console.log(res)
-    planList.value = res.data
+    const dateString = dayjs().format('YYYY-MM-DD')
+    await handleDateChange(dateString, dateString)
   } catch (error) {
     console.log(error)
   }
 }
 
 onMounted(async () => {
-  const dateString = dayjs().format('YYYY-MM-DD')
-  await handleDateChange(dateString, dateString)
+  await refreshPlans()
   if (planList.value.length === 0 && createTaskRef.value) {
     for (const params of defaultTaskList) {
       await createTaskRef.value.onCreateTask(params)
     }
-    await handleDateChange(dateString, dateString)
+    await refreshPlans()
   }
 })
 </script>
@@ -55,7 +52,8 @@ onMounted(async () => {
       :icon="happyIcon"
       title="开心每一天"
       button-text="添加任务"
-      @button-click="openCreateTaskModal" />
+      @button-click="openCreateTaskModal"
+    />
 
     <main class="home-main p-24">
       <Card hoverable>
@@ -69,7 +67,8 @@ onMounted(async () => {
               <DatePicker
                 v-model:value="nowDate"
                 placeholder="请选择开始时间"
-                @change="handleDateChange" />
+                @change="handleDateChange"
+              />
             </div>
           </div>
         </template>
@@ -80,14 +79,16 @@ onMounted(async () => {
               v-for="item in planList"
               :key="item.id"
               :plan-item="item"
-              @refresh="getAllPlans" />
+              @refresh="refreshPlans"
+            />
           </div>
         </template>
 
         <template v-else>
           <Empty
             :image="Empty.PRESENTED_IMAGE_SIMPLE"
-            description="今天都没有待办任务喔～"></Empty>
+            description="今天都没有待办任务喔～"
+          ></Empty>
           <div class="flex-center">
             <Button type="primary" @click="openCreateTaskModal">
               添加任务
@@ -97,6 +98,6 @@ onMounted(async () => {
       </Card>
     </main>
 
-    <CreateTask ref="createTaskRef" @refresh="getAllPlans" />
+    <CreateTask ref="createTaskRef" @refresh="refreshPlans" />
   </div>
 </template>

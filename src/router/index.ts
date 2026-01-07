@@ -24,16 +24,17 @@ const router = createRouter({
             title: '生活点滴',
             icon: 'mdi:journal-outline'
           }
+        }
+        /**
+        {
+          path: 'plan',
+          name: 'Plan',
+          component: () => import('@/views/Plan/plan-view.vue'),
+          meta: {
+            title: '每日总结',
+            icon: 'mdi:planner-outline'
+          }
         },
-        // {
-        //   path: 'plan',
-        //   name: 'Plan',
-        //   component: () => import('@/views/Plan/plan-view.vue'),
-        //   meta: {
-        //     title: '每日总结',
-        //     icon: 'mdi:planner-outline'
-        //   }
-        // },
         {
           path: 'knowledge-tree',
           name: 'KnowledgeTree',
@@ -53,6 +54,7 @@ const router = createRouter({
             icon: 'mdi:comment-question-outline'
           }
         }
+        **/
       ]
     },
     {

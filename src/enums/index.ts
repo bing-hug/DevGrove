@@ -546,3 +546,9 @@ export const getMoodOptions = (): MoodOption[] => [
     intensity: 4
   }
 ]
+
+const moodOptions = getMoodOptions()
+
+export const getSingleMood = (value: string): MoodOption | null => {
+  return moodOptions.find((item) => item.value === value) || null
+}

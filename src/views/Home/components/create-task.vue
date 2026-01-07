@@ -89,7 +89,8 @@ defineExpose({
         :model="form"
         :rules="formRules"
         layout="vertical"
-        autocomplete="off">
+        autocomplete="off"
+      >
         <FormItem label="任务名称" name="title">
           <Input v-model:value="form.title" placeholder="请输入任务名称" />
         </FormItem>
@@ -101,30 +102,35 @@ defineExpose({
               minRows: 3,
               maxRows: 6
             }"
-            placeholder="请输入任务描述" />
+            placeholder="请输入任务描述"
+          />
         </FormItem>
 
         <FormItem label="开始时间" name="startDate">
           <DatePicker
             v-model:value="form.startDate"
-            placeholder="请选择开始时间" />
+            placeholder="请选择开始时间"
+          />
         </FormItem>
 
         <FormItem label="优先级" name="remark">
           <Select
             v-model:value="form.priority"
             :defaultActiveFirstOption="true"
-            placeholder="请选择任务优先级">
+            placeholder="请选择任务优先级"
+          >
             <SelectOption
               v-for="item in priorityEnum"
               :key="item.value"
-              :value="item.value">
+              :value="item.value"
+            >
               <div class="flex items-center gap-10">
                 <img
                   :src="item.icon"
                   :alt="item.label"
                   class="w-24"
-                  style="width: 24px" />
+                  style="width: 24px"
+                />
                 <div>{{ item.label }}</div>
               </div>
             </SelectOption>
