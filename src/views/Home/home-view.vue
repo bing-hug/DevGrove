@@ -47,7 +47,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="home">
+  <div class="home h-full flex flex-col">
     <main-header
       :icon="happyIcon"
       title="开心每一天"
@@ -55,7 +55,7 @@ onMounted(async () => {
       @button-click="openCreateTaskModal"
     />
 
-    <main class="home-main p-24">
+    <main class="home-main flex-1 overflow-y-scroll p-24">
       <Card hoverable>
         <template #title>
           <div class="flex items-center justify-between gap-10 py-10">
@@ -101,3 +101,10 @@ onMounted(async () => {
     <CreateTask ref="createTaskRef" @refresh="refreshPlans" />
   </div>
 </template>
+
+<style scoped lang="scss">
+.home-main {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+</style>

@@ -19,7 +19,8 @@
     "terser": "^5.44.1",
     "vue": "^3.5.24",
     "vue-router": "^4.6.4",
-    "vue-ueditor-wrap": "~3.0.8"
+    "vue-ueditor-wrap": "~3.0.8",
+    "wl-live2d": "^1.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
