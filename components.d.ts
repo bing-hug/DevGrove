@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     IMdiCalendarMonth: typeof import('~icons/mdi/calendar-month')['default']
     IMdiImageAddOutline: typeof import('~icons/mdi/image-add-outline')['default']
+    Live2d: typeof import('./src/components/live-2d.vue')['default']
     MainHeader: typeof import('./src/components/main-header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
