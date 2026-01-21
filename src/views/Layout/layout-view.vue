@@ -8,22 +8,8 @@ onMounted(async () => {
   wlLive2d({
     models: [
       {
-        path: '/live2d/Mao/Mao.model3.json',
-        scale: 0.4,
-        position: { x: 0, y: 0 }
-      },
-      {
-        path: '/live2d/Mark/Mark.model3.json',
-
-        position: { x: 0, y: 0 }
-      },
-      {
         path: '/live2d/Hiyori/Hiyori.model3.json',
 
-        position: { x: 0, y: 0 }
-      },
-      {
-        path: '/live2d/Haru/Haru.model3.json',
         position: { x: 0, y: 0 }
       }
     ],
@@ -38,7 +24,7 @@ onMounted(async () => {
         ]
       }
     ] as unknown as DTips[],
-    menus: ['home', 'switchModule', 'switchTexture', 'capture']
+    menus: ['home', 'switchTexture', 'capture']
   } as unknown as DLive2dOptions)
 })
 </script>
