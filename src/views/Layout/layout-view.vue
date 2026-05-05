@@ -9,7 +9,6 @@ onMounted(async () => {
     models: [
       {
         path: '/live2d/Hiyori/Hiyori.model3.json',
-
         position: { x: 0, y: 0 }
       }
     ],

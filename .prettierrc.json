@@ -8,6 +8,6 @@
   "bracketSameLine": false,
   "arrowParens": "always",
   "vueIndentScriptAndStyle": false,
-  "endOfLine": "lf",
+  "endOfLine": "auto",
   "vueHtmlMultilineAttributes": true
 }

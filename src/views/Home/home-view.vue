@@ -17,7 +17,7 @@ function openCreateTaskModal() {
   createTaskRef.value?.openModal()
 }
 
-async function handleDateChange(_: string | Dayjs, dateString: string) {
+async function loadPlansByDate(dateString: string) {
   try {
     const res = await queryPlansByDateApi(dateString)
     planList.value = res.data
@@ -26,22 +26,22 @@ async function handleDateChange(_: string | Dayjs, dateString: string) {
   }
 }
 
+function handleDateChange(_: Dayjs | string, dateString: string) {
+  loadPlansByDate(dateString)
+}
+
 async function refreshPlans() {
-  try {
-    const dateString = dayjs().format('YYYY-MM-DD')
-    await handleDateChange(dateString, dateString)
-  } catch (error) {
-    console.log(error)
-  }
+  await loadPlansByDate(nowDate.value.format('YYYY-MM-DD'))
 }
 
 onMounted(async () => {
-  await refreshPlans()
+  const today = dayjs().format('YYYY-MM-DD')
+  await loadPlansByDate(today)
   if (planList.value.length === 0 && createTaskRef.value) {
     for (const params of defaultTaskList) {
       await createTaskRef.value.onCreateTask(params)
     }
-    await refreshPlans()
+    await loadPlansByDate(today)
   }
 })
 </script>
@@ -61,7 +61,7 @@ onMounted(async () => {
           <div class="flex items-center justify-between gap-10 py-10">
             <div class="flex items-center gap-10">
               <i-mdi-calendar-month class="w-36 h-36" />
-              <div>{{ dayjs(nowDate).format('YYYY-MM-DD') }} 的任务</div>
+              <div>{{ nowDate.format('YYYY-MM-DD') }} 的任务</div>
             </div>
             <div class="flex items-center gap-10">
               <DatePicker
