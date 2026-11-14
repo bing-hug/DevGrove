@@ -1,65 +1,77 @@
 <script setup lang="ts">
-import type { LifeRecordItem } from '@/types'
-import { spliceImgUrl } from '@/utils/spliceImgUrl.ts'
+import { ref } from 'vue'
 import { Card } from 'ant-design-vue'
 import { getSingleMood } from '@/enums'
+import { spliceImgUrl } from '@/utils/spliceImgUrl'
+import { toPlainText } from '@/utils/sanitize'
+import { toDateKey } from '@/utils/stats'
+import type { LifeRecordItem } from '@/types'
 
 const props = defineProps<{
   record: LifeRecordItem
 }>()
 
-const recordMood = computed(() => {
-  return getSingleMood(props.record.mood)
-})
+const emits = defineEmits<{
+  (e: 'open', record: LifeRecordItem): void
+}>()
+
+const mood = ref(getSingleMood(props.record.mood))
+const excerpt = ref(toPlainText(props.record.content, 90))
 </script>
 
 <template>
-  <Card class="record-item max-w-320">
+  <Card
+    class="record-item cursor-pointer h-full"
+    :bordered="false"
+    hoverable
+    @click="emits('open', record)"
+  >
     <template #cover>
-      <div class="p-20 pb-0">
-        <img :src="spliceImgUrl(record.cover)" style="width: 100%" alt="封面" />
+      <div v-if="record.cover" class="overflow-hidden" style="height: 168px">
+        <img
+          :src="spliceImgUrl(record.cover)"
+          alt="封面"
+          class="w-full h-full object-cover"
+        />
       </div>
     </template>
 
-    <div class="content">
-      <div class="title">
-        <span>标题：</span>
-        <span>{{ record.title }}</span>
-      </div>
-
-      <div class="mood">
-        <span>心情：</span>
-        <span :style="{ color: recordMood?.color }">
-          {{ recordMood?.emoji }} {{ recordMood?.label }}
+    <div class="flex flex-col gap-6">
+      <div class="flex items-center justify-between gap-8">
+        <span class="text-15px font-semibold truncate">{{ record.title }}</span>
+        <span
+          v-if="mood"
+          class="flex-shrink-0 text-13px"
+          :style="{ color: mood.color }"
+        >
+          {{ mood.emoji }} {{ mood.label }}
         </span>
       </div>
 
-      <div class="记录时间">
-        <span>记录时间：</span>
-        <span>{{ record.life_date }}</span>
+      <div class="text-12px" style="color: var(--text-secondary)">
+        {{ toDateKey(record.life_date) }}
       </div>
+
       <div
-        class="description max-h-100 overflow-y-scroll overflow-x-hidden break-all"
+        class="text-13px leading-22"
+        style="color: var(--text-secondary); min-height: 44px"
       >
-        <span v-html="record.content"></span>
+        {{ excerpt || '（暂无正文）' }}
       </div>
     </div>
   </Card>
 </template>
 
-<style scoped lang="scss">
-.record-item:hover {
-  box-shadow:
-    0 4px 8px 0 rgb(207 201 201 / 20%),
-    0 6px 20px 0 rgba(159, 243, 234, 0.19);
-}
-.description {
-  /* 隐藏滚动条 */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+<style scoped>
+.record-item {
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.description::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Edge */
+.record-item:hover {
+  transform: translateY(-2px);
 }
 </style>

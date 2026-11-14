@@ -1,4 +1,64 @@
 #app {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Live2D 消息气泡由组件库动态创建，样式必须全局生效 */
+#live2dMessageBox-content {
+  background-color: #ff95bc;
+  color: white;
+  padding: 10px;
+  height: fit-content;
+  border-radius: 0.7em;
+  word-break: break-all;
+  border-right: 1px solid transparent;
+}
+
+.live2dMessageBox-content-hidden {
+  opacity: 0;
+  transform: scaleY(0.2);
+  transition: all 0.35s ease-in;
+  -moz-transition: all 0.35s ease-in;
+  -webkit-transition: all 0.35s ease-in;
+}
+
+.live2dMessageBox-content-visible {
+  opacity: 1;
+  transition: all 0.35s ease-out;
+  -moz-transition: all 0.35s ease-out;
+  -webkit-transition: all 0.35s ease-out;
+}
+
+/* 富文本内容统一排版 */
+.rich-text {
+  color: var(--text-primary);
+  line-height: 1.8;
+  word-break: break-word;
+
+  img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  a {
+    color: #4c8bf5;
+  }
+}
+
+.rich-text p {
+  margin: 0 0 8px;
 }

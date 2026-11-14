@@ -11,8 +11,22 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    GlobalSearch: typeof import('./src/components/global-search.vue')['default']
+    IMdiAlertCircleOutline: typeof import('~icons/mdi/alert-circle-outline')['default']
     IMdiCalendarMonth: typeof import('~icons/mdi/calendar-month')['default']
+    IMdiCheckboxMarkedCircle: typeof import('~icons/mdi/checkbox-marked-circle')['default']
+    IMdiChevronLeft: typeof import('~icons/mdi/chevron-left')['default']
+    IMdiChevronRight: typeof import('~icons/mdi/chevron-right')['default']
+    IMdiCircleOutline: typeof import('~icons/mdi/circle-outline')['default']
+    IMdiCircleSmall: typeof import('~icons/mdi/circle-small')['default']
     IMdiImageAddOutline: typeof import('~icons/mdi/image-add-outline')['default']
+    IMdiLockOutline: typeof import('~icons/mdi/lock-outline')['default']
+    IMdiMagnify: typeof import('~icons/mdi/magnify')['default']
+    IMdiMapMarkerQuestionOutline: typeof import('~icons/mdi/map-marker-question-outline')['default']
+    IMdiMenu: typeof import('~icons/mdi/menu')['default']
+    IMdiNotebookOutline: typeof import('~icons/mdi/notebook-outline')['default']
+    IMdiThemeLightDark: typeof import('~icons/mdi/theme-light-dark')['default']
+    IMdiTrophyVariant: typeof import('~icons/mdi/trophy-variant')['default']
     Live2d: typeof import('./src/components/live-2d.vue')['default']
     MainHeader: typeof import('./src/components/main-header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

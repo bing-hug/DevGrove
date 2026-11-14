@@ -17,6 +17,15 @@ const router = createRouter({
           }
         },
         {
+          path: 'calendar',
+          name: 'Calendar',
+          component: () => import('@/views/Calendar/calendar-view.vue'),
+          meta: {
+            title: '日历',
+            icon: 'mdi:calendar-month'
+          }
+        },
+        {
           path: 'life-records',
           name: 'Life',
           component: () => import('@/views/LifeRecord/life-view.vue'),
@@ -24,22 +33,20 @@ const router = createRouter({
             title: '生活点滴',
             icon: 'mdi:journal-outline'
           }
-        }
-        /**
+        },
         {
-          path: 'plan',
-          name: 'Plan',
-          component: () => import('@/views/Plan/plan-view.vue'),
+          path: 'summary',
+          name: 'Summary',
+          component: () => import('@/views/Summary/summary-view.vue'),
           meta: {
-            title: '每日总结',
-            icon: 'mdi:planner-outline'
+            title: '数据回顾',
+            icon: 'mdi:chart-line'
           }
         },
         {
           path: 'knowledge-tree',
           name: 'KnowledgeTree',
-          component: () =>
-            import('@/views/KnowledgeTree/knowledge-tree-view.vue'),
+          component: () => import('@/views/KnowledgeTree/knowledge-tree-view.vue'),
           meta: {
             title: '知识树',
             icon: 'mdi:palm-tree'
@@ -54,7 +61,6 @@ const router = createRouter({
             icon: 'mdi:comment-question-outline'
           }
         }
-        **/
       ]
     },
     {

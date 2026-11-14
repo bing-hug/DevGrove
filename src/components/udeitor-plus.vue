@@ -1,13 +1,31 @@
 <script setup lang="ts">
-const emits = defineEmits(['updateContent'])
-const content = ref('今天怎么样了')
+import { ref, watch } from 'vue'
 
-watch(
-  () => content.value,
-  (newValue) => {
-    emits('updateContent', newValue)
+const props = withDefaults(
+  defineProps<{
+    modelValue?: string
+  }>(),
+  {
+    modelValue: ''
   }
 )
+
+const emits = defineEmits<{
+  (e: 'update:modelValue', value: string): void
+}>()
+
+const content = ref(props.modelValue)
+
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (value !== content.value) content.value = value
+  }
+)
+
+watch(content, (value) => {
+  emits('update:modelValue', value)
+})
 
 const editorConfig = {
   // 后端服务地址，后端处理参考
@@ -24,8 +42,7 @@ const editorConfig = {
     v-model="content"
     editor-id="editor"
     :config="editorConfig"
-    :editorDependencies="['ueditor.config.js', 'ueditor.all.js']"
-    style="width: 100%" />
+    :editor-dependencies="['ueditor.config.js', 'ueditor.all.js']"
+    style="width: 100%"
+  />
 </template>
-
-<style scoped lang="scss"></style>

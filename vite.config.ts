@@ -9,6 +9,7 @@ import Components from 'unplugin-vue-components/vite'
 
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd())
+
   return {
     resolve: {
       alias: {
@@ -23,9 +24,9 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       }),
       Icons(),
       AutoImport({
-        imports: ['vue', 'vue-router', 'vue-i18n', '@vueuse/core', 'pinia'],
+        imports: ['vue', 'vue-router', '@vueuse/core'],
         dts: 'types/auto-imports.d.ts',
-        dirs: ['src/stores', 'src/composables', 'src/hooks'],
+        dirs: ['src/stores', 'src/composables'],
         eslintrc: {
           enabled: false,
           filepath: './.eslintrc-auto-import.json', // 明确指定文件路径

@@ -3,13 +3,13 @@ import { Button } from 'ant-design-vue'
 
 withDefaults(
   defineProps<{
-    icon: string
+    icon?: string
     title: string
-    buttonText: string
+    subtitle?: string
+    buttonText?: string
   }>(),
   {
-    title: '开心每一天',
-    buttonText: '添加任务'
+    buttonText: ''
   }
 )
 
@@ -20,19 +20,38 @@ const emits = defineEmits<{
 
 <template>
   <header
-    class="home-header flex justify-between items-center bg-white p-16 rounded-10">
-    <div class="home-header-title flex gap-20 items-center leading-48">
-      <img :src="icon" alt="开心" class="h-48" />
-      <div class="font-24 font-bold theme-color">{{ title }}</div>
+    class="main-header flex justify-between items-center gap-16 p-16 rounded-10"
+  >
+    <div class="flex gap-16 items-center min-w-0">
+      <img
+        v-if="icon"
+        :src="icon"
+        alt=""
+        class="flex-shrink-0 w-44 h-44 object-contain"
+      />
+      <div class="min-w-0">
+        <div class="font-24 font-bold truncate">{{ title }}</div>
+        <div
+          v-if="subtitle"
+          class="mt-2 text-12px"
+          style="color: var(--text-secondary)"
+        >
+          {{ subtitle }}
+        </div>
+      </div>
     </div>
-    <Button type="primary" @click="emits('buttonClick')">{{
-      buttonText
-    }}</Button>
+    <div class="flex items-center gap-12 flex-shrink-0">
+      <slot name="extra" />
+      <Button v-if="buttonText" type="primary" @click="emits('buttonClick')">
+        {{ buttonText }}
+      </Button>
+    </div>
   </header>
 </template>
 
-<style scoped lang="scss">
-.home-header {
-  box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 8px;
+<style scoped>
+.main-header {
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
 }
 </style>

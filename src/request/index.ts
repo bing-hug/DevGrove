@@ -1,129 +1,123 @@
-// index.ts
 import axios from 'axios'
 import type {
+  AxiosError,
   AxiosInstance,
   AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-  AxiosError
+  AxiosResponse
 } from 'axios'
 import { message } from 'ant-design-vue'
 
-type Result<T> = {
+export interface Result<T = unknown> {
   success: boolean
   errorMsg: string
   data: T
 }
 
-const baseURL =
-  import.meta.env.VITE_APP_ENV === 'development'
-    ? '/api'
-    : import.meta.env.VITE_API_BASE_URL
+const STATUS_TEXT: Record<number, string> = {
+  400: '请求错误(400)',
+  401: '未授权，请重新登录(401)',
+  403: '拒绝访问(403)',
+  404: '请求的资源不存在(404)',
+  408: '请求超时(408)',
+  500: '服务器错误(500)',
+  501: '服务未实现(501)',
+  502: '网关错误(502)',
+  503: '服务不可用(503)',
+  504: '网关超时(504)',
+  505: 'HTTP 版本不受支持(505)'
+}
 
-// 导出Request类，可以用来自定义传递配置来创建实例
+const baseURL = import.meta.env.DEV
+  ? '/api'
+  : import.meta.env.VITE_API_BASE_URL
+
+/** 同一错误在短时间内只提示一次，避免多个并发请求刷屏 */
+let lastTip = ''
+let lastTipAt = 0
+function tipError(text: string) {
+  const now = Date.now()
+  if (text === lastTip && now - lastTipAt < 2000) return
+  lastTip = text
+  lastTipAt = now
+  message.error(text)
+}
+
+/**
+ * axios 二次封装
+ * 约定后端返回 { success, errorMsg, data }，拦截器直接解包 data
+ */
 export class Request {
-  // axios 实例
   instance: AxiosInstance
-  // 基础配置，url和超时时间
-  baseConfig: AxiosRequestConfig = { baseURL: baseURL, timeout: 60000 }
 
-  constructor(config: AxiosRequestConfig) {
-    // 使用axios.create创建axios实例
-    this.instance = axios.create(Object.assign(this.baseConfig, config))
+  constructor(config: AxiosRequestConfig = {}) {
+    this.instance = axios.create({
+      baseURL,
+      timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 30000,
+      ...config
+    })
 
     this.instance.interceptors.request.use(
-      (config: InternalAxiosRequestConfig) => {
-        // 一般会请求拦截里面加token，用于后端的验证
-        const token = localStorage.getItem('token') as string
+      (cfg) => {
+        const token = localStorage.getItem('token')
         if (token) {
-          config.headers!.Authorization = token
+          cfg.headers.Authorization = token
         }
-
-        return config
+        return cfg
       },
-      (err: Error) => {
-        // 请求错误，这里可以用全局提示框进行提示
-        return Promise.reject(err)
-      }
+      (err: Error) => Promise.reject(err)
     )
 
     this.instance.interceptors.response.use(
-      (res: AxiosResponse) => {
-        if (res.status === 200 && res.data.success) {
-          return res.data
+      (res: AxiosResponse<Result>) => {
+        const body = res.data
+        if (body && typeof body === 'object' && body.success) {
+          return body as unknown as AxiosResponse
         }
-        message.error(res.data.errorMsg)
-        return Promise.reject(res.data.errorMsg)
+        // 后端业务错误：统一提示，避免调用方拿不到原因
+        const errorMsg = body?.errorMsg || '请求失败，请稍后重试'
+        tipError(errorMsg)
+        return Promise.reject(new Error(errorMsg))
       },
-      (err: AxiosError) => {
-        // 这里用来处理http常见错误，进行全局提示
-        let message = ''
-        switch (err.response?.status) {
-          case 400:
-            message = '请求错误(400)'
-            break
-          case 401:
-            message = '未授权，请重新登录(401)'
-            // 这里可以做清空storage并跳转到登录页的操作
-            break
-          case 403:
-            message = '拒绝访问(403)'
-            break
-          case 404:
-            message = '请求出错(404)'
-            break
-          case 408:
-            message = '请求超时(408)'
-            break
-          case 500:
-            message = '服务器错误(500)'
-            break
-          case 501:
-            message = '服务未实现(501)'
-            break
-          case 502:
-            message = '网络错误(502)'
-            break
-          case 503:
-            message = '服务不可用(503)'
-            break
-          case 504:
-            message = '网络超时(504)'
-            break
-          case 505:
-            message = 'HTTP版本不受支持(505)'
-            break
-          default:
-            message = `连接出错(${err.response?.status})!`
+      (err: AxiosError<Result>) => {
+        const status = err.response?.status
+        const text =
+          (status ? STATUS_TEXT[status] : '') ||
+          err.response?.data?.errorMsg ||
+          (err.code === 'ECONNABORTED'
+            ? '请求超时，请检查网络'
+            : '网络异常，请检查网络连接')
+
+        if (status === 401) {
+          // 登录态失效：清掉本地凭证
+          localStorage.removeItem('token')
         }
-        console.log(message)
-        // 这里错误消息可以使用全局弹框展示出来
-        // 比如element plus 可以使用 ElMessage
-        // ElMessage({
-        //   showClose: true,
-        //   message: `${message}，请检查网络或联系管理员！`,
-        //   type: "error",
-        // });
-        // 这里是AxiosError类型，所以一般我们只reject我们需要的响应即可
-        return Promise.reject(err.response)
+
+        tipError(text)
+        return Promise.reject(err)
       }
     )
   }
 
-  // 定义请求方法
-  public request(config: AxiosRequestConfig): Promise<AxiosResponse> {
-    return this.instance.request(config)
+  public request<T>(config: AxiosRequestConfig): Promise<Result<T>> {
+    return this.instance.request(config) as unknown as Promise<Result<T>>
   }
 
-  public get<T>(url: string, config?: AxiosRequestConfig): Promise<Result<T>> {
-    return this.instance.get(url, config)
+  public get<T>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<Result<T>> {
+    return this.instance.get(url, config) as unknown as Promise<Result<T>>
   }
 
-  public post<T>(url: string, config?: AxiosRequestConfig): Promise<Result<T>> {
-    const data = config?.data || null
-    return this.instance.post(url, data, config)
+  public post<T>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<Result<T>> {
+    const data = config?.data ?? null
+    return this.instance.post(url, data, config) as unknown as Promise<
+      Result<T>
+    >
   }
 }
 
-// 默认导出Request实例
-export default new Request({})
+export default new Request()
